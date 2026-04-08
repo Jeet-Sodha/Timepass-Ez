@@ -137,8 +137,8 @@
         animation__position="property: position; from: 0 0 -0.1; to: 0 0.55 0.03; dur: 1400; easing: easeInOutSine; fill: forwards; startEvents: playIn">
       </a-image>
       <!-- Bottom: WhatsApp 3D model – slide in from behind (position a bit low) -->
-      <a-entity class="side-img" id="whatsapp-btn" position="0 0 -0.1"
-        animation__position="property: position; from: 0 0 -0.1; to: 0 -0.72 0.04; dur: 1400; easing: easeInOutSine; fill: forwards; startEvents: playIn">
+      <a-entity class="side-img" id="whatsapp-btn" position="0 -0.08 -0.1"
+        animation__position="property: position; from: 0 -0.08 -0.1; to: 0 -0.8 0.04; dur: 1400; easing: easeInOutSine; fill: forwards; startEvents: playIn">
         <a-entity gltf-model="#whatsapp-model" scale="-0.4 -0.4 0.4" rotation="0 180 -90"></a-entity>
       </a-entity>
     </a-entity>
@@ -147,7 +147,7 @@
   <script>
     var statusEl = document.getElementById('target-status');
     var targetEl = document.getElementById('target-0');
-    var sideFromPositions = { 'side-left': '0 0 -0.1', 'side-right': '0 0 -0.1', 'side-top': '0 0 -0.1', 'whatsapp-btn': '0 0 -0.1' };
+    var sideFromPositions = { 'side-left': '0 0 -0.1', 'side-right': '0 0 -0.1', 'side-top': '0 0 -0.1', 'whatsapp-btn': '0 -0.08 -0.1' };
 var WHATSAPP_NUMBER = '919819605451';
 
     function openWhatsApp() {
