@@ -117,6 +117,7 @@
   <a-scene mindar-image="imageTargetSrc: ./targets.mind;" vr-mode-ui="enabled: false" device-orientation-permission-ui="enabled: false">
     <a-assets>
       <a-asset-item id="whatsapp-model" src="whatsapp.glb"></a-asset-item>
+      <video id="wa-vid" src="1.mp4" preload="auto" loop muted playsinline webkit-playsinline crossorigin="anonymous"></video>
     </a-assets>
     <a-camera position="0 0 0" look-controls="enabled: false"></a-camera>
     <a-entity id="target-0" mindar-image-target="targetIndex: 0">
@@ -136,18 +137,62 @@
         animation__opacity="property: material.opacity; from: 0; to: 1; dur: 1400; easing: easeInOutSine; fill: forwards; startEvents: playIn"
         animation__position="property: position; from: 0 0 -0.1; to: 0 0.55 0.03; dur: 1400; easing: easeInOutSine; fill: forwards; startEvents: playIn">
       </a-image>
-      <!-- Bottom: WhatsApp 3D model – slide in from behind (position a bit low) -->
-      <a-entity class="side-img" id="whatsapp-btn" position="0 -0.12 -0.1"
-        animation__position="property: position; from: 0 -0.12 -0.1; to: 0 -0.84 0.04; dur: 1400; easing: easeInOutSine; fill: forwards; startEvents: playIn">
-        <a-entity gltf-model="#whatsapp-model" scale="-0.4 -0.4 0.4" rotation="0 180 -90"></a-entity>
+      <!-- Bottom: WhatsApp 3D model (fixed), fades in on detection -->
+      <a-entity class="side-img" id="whatsapp-btn" position="0 -0.84 0.04">
+        <a-entity id="whatsapp-model-entity" gltf-model="#whatsapp-model" scale="-0.4 -0.4 0.4" rotation="0 180 -90" model-opacity="opacity: 0"></a-entity>
       </a-entity>
+
+      <!-- Video panel: left of WhatsApp, fades in then plays -->
+      <a-video class="side-img" id="wa-video" src="#wa-vid" position="-0.6 -0.84 0.04"
+        width="0.42" height="0.24" material="opacity: 0; transparent: true">
+      </a-video>
     </a-entity>
   </a-scene>
 
   <script>
+    // Controls opacity of glTF meshes (A-Frame material opacity doesn't affect glTF children).
+    AFRAME.registerComponent('model-opacity', {
+      schema: { opacity: { type: 'number', default: 1 } },
+      init: function () {
+        this.meshes = [];
+        this._apply(this.data.opacity);
+        this.el.addEventListener('model-loaded', () => this._collectAndApply());
+      },
+      update: function () { this._apply(this.data.opacity); },
+      _collectAndApply: function () {
+        this.meshes = [];
+        var obj = this.el.getObject3D('mesh');
+        if (!obj) return;
+        obj.traverse((n) => {
+          if (!n.isMesh) return;
+          if (!n.material) return;
+          var mats = Array.isArray(n.material) ? n.material : [n.material];
+          mats.forEach((m) => {
+            if (!m) return;
+            m.transparent = true;
+          });
+          this.meshes.push(n);
+        });
+        this._apply(this.data.opacity);
+      },
+      _apply: function (opacity) {
+        var obj = this.el.getObject3D('mesh');
+        if (!obj) return;
+        if (!this.meshes.length) this._collectAndApply();
+        this.meshes.forEach((mesh) => {
+          var mats = Array.isArray(mesh.material) ? mesh.material : [mesh.material];
+          mats.forEach((m) => {
+            if (!m) return;
+            m.opacity = opacity;
+            m.needsUpdate = true;
+          });
+        });
+      }
+    });
+
     var statusEl = document.getElementById('target-status');
     var targetEl = document.getElementById('target-0');
-    var sideFromPositions = { 'side-left': '0 0 -0.1', 'side-right': '0 0 -0.1', 'side-top': '0 0 -0.1', 'whatsapp-btn': '0 -0.12 -0.1' };
+    var sideFromPositions = { 'side-left': '0 0 -0.1', 'side-right': '0 0 -0.1', 'side-top': '0 0 -0.1', 'whatsapp-btn': '0 -0.84 0.04', 'wa-video': '-0.6 -0.84 0.04' };
 var WHATSAPP_NUMBER = '919819605451';
 
     function openWhatsApp() {
@@ -199,11 +244,22 @@ var WHATSAPP_NUMBER = '919819605451';
         var id = el.getAttribute('id');
         if (sideFromPositions[id]) {
           el.setAttribute('position', sideFromPositions[id]);
-          if (id !== 'whatsapp-btn') {
+          if (id !== 'whatsapp-btn' && id !== 'wa-video') {
             el.setAttribute('material', 'opacity', 0);
           }
         }
       });
+
+      var waModel = document.getElementById('whatsapp-model-entity');
+      if (waModel) waModel.setAttribute('model-opacity', 'opacity', 0);
+
+      var waVideoEl = document.getElementById('wa-video');
+      if (waVideoEl) waVideoEl.setAttribute('material', 'opacity', 0);
+
+      var waVidAsset = document.getElementById('wa-vid');
+      if (waVidAsset) {
+        try { waVidAsset.pause(); waVidAsset.currentTime = 0; } catch (e) {}
+      }
     }
 
     targetEl.addEventListener('targetFound', function () {
@@ -211,6 +267,45 @@ var WHATSAPP_NUMBER = '919819605451';
       whatsappUiBtn.classList.add('visible');
       resetSideImages();
       setTimeout(playSideAnimations, 50);
+
+      // WhatsApp model: fade in over ~4.5s
+      var waModel = document.getElementById('whatsapp-model-entity');
+      if (waModel) {
+        waModel.removeAttribute('animation__waOpacity');
+        waModel.setAttribute('animation__waOpacity', {
+          property: 'model-opacity.opacity',
+          from: 0,
+          to: 1,
+          dur: 4500,
+          easing: 'easeInOutSine',
+          autoplay: true
+        });
+      }
+
+      // Video: fade in 2s, then play
+      var waVideoEl = document.getElementById('wa-video');
+      var waVidAsset = document.getElementById('wa-vid');
+      if (waVideoEl) {
+        waVideoEl.removeAttribute('animation__waVideoOpacity');
+        waVideoEl.setAttribute('animation__waVideoOpacity', {
+          property: 'material.opacity',
+          from: 0,
+          to: 1,
+          dur: 2000,
+          easing: 'easeInOutSine',
+          autoplay: true
+        });
+      }
+      if (waVideoEl && waVidAsset) {
+        var played = false;
+        var handler = function () {
+          if (played) return;
+          played = true;
+          waVideoEl.removeEventListener('animationcomplete__waVideoOpacity', handler);
+          try { waVidAsset.play(); } catch (e) {}
+        };
+        waVideoEl.addEventListener('animationcomplete__waVideoOpacity', handler);
+      }
     });
     targetEl.addEventListener('targetLost', function () {
       statusEl.classList.remove('hidden');
