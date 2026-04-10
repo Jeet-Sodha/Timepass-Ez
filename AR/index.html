@@ -173,7 +173,7 @@
       </a-entity>
 
       <!-- Video panel: left of WhatsApp, fades in then plays -->
-      <a-video class="side-img" id="wa-video" src="#wa-vid" position="-0.48 -0.88 0.05"
+      <a-video class="side-img" id="wa-video" src="#wa-vid" position="-0.62 -0.88 0.05"
         width="1.26" height="0.72" material="opacity: 0; transparent: true">
       </a-video>
     </a-entity>
@@ -222,7 +222,7 @@
 
     var statusEl = document.getElementById('target-status');
     var targetEl = document.getElementById('target-0');
-    var sideFromPositions = { 'side-left': '0 0 -0.1', 'side-right': '0 0 -0.1', 'side-top': '0 0 -0.1', 'whatsapp-btn': '0 -0.84 0.04', 'wa-video': '-0.48 -0.88 0.05' };
+    var sideFromPositions = { 'side-left': '0 0 -0.1', 'side-right': '0 0 -0.1', 'side-top': '0 0 -0.1', 'whatsapp-btn': '0 -0.84 0.04', 'wa-video': '-0.62 -0.88 0.05' };
 var WHATSAPP_NUMBER = '919819605451';
 
     function openWhatsApp() {
@@ -327,22 +327,12 @@ var WHATSAPP_NUMBER = '919819605451';
         waVideoEl.setAttribute('material', 'opacity', 1);
       }
       if (waVidAsset) {
-        // Try autoplay WITH sound first; if blocked, fall back to muted.
-        waVidAsset.muted = false;
-        waVidAsset.volume = 1.0;
-        var p;
-        try { p = waVidAsset.play(); } catch (e) { p = null; }
-        if (p && typeof p.catch === 'function') {
-          p.catch(function () {
-            try {
-              waVidAsset.muted = true;
-              waVidAsset.play();
-            } catch (e) {}
-          });
-        }
+        // Reliable autoplay: keep muted (mobile-friendly)
+        waVidAsset.muted = true;
+        try { waVidAsset.play(); } catch (e) {}
 
         var audioBtn = document.getElementById('video-audio-toggle');
-        if (audioBtn) audioBtn.textContent = waVidAsset.muted ? 'Unmute video' : 'Mute video';
+        if (audioBtn) audioBtn.textContent = 'Unmute video';
       }
     });
 
