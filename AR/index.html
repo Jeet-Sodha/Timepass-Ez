@@ -112,9 +112,9 @@
 
     #video-audio-toggle {
       position: fixed;
-      bottom: 28px;
-      right: 220px;
-      left: auto;
+      bottom: 18px;
+      left: 18px;
+      right: auto;
       transform: none;
       padding: 10px 16px;
       border-radius: 999px;
@@ -170,13 +170,13 @@
         animation__position="property: position; from: 0 0 -0.1; to: 0 0.55 0.03; dur: 1400; easing: easeInOutSine; fill: forwards; startEvents: playIn">
       </a-image>
       <!-- Bottom: WhatsApp 3D model (fixed), fades in on detection -->
-      <a-entity class="side-img" id="whatsapp-btn" position="0 0 0.04">
+      <a-entity class="side-img" id="whatsapp-btn" position="0.08 -0.84 0.04">
         <a-entity id="whatsapp-model-entity" gltf-model="#whatsapp-model" scale="-0.4 -0.4 0.4" rotation="0 180 -90" model-opacity="opacity: 0"></a-entity>
       </a-entity>
 
       <!-- Video panel: left of WhatsApp, plays muted (mobile-friendly) -->
-      <a-video class="side-img" id="wa-video" src="#wa-vid" position="-0.95 -0.88 0.05"
-        width="1.26" height="0.72" material="opacity: 0; transparent: true">
+      <a-video class="side-img" id="wa-video" src="#wa-vid" position="-1.1 -0.88 0.05"
+        width="1.008" height="0.576" material="opacity: 0; transparent: true">
       </a-video>
     </a-entity>
   </a-scene>
@@ -224,7 +224,7 @@
 
     var statusEl = document.getElementById('target-status');
     var targetEl = document.getElementById('target-0');
-    var sideFromPositions = { 'side-left': '0 0 -0.1', 'side-right': '0 0 -0.1', 'side-top': '0 0 -0.1' };
+    var sideFromPositions = { 'side-left': '0 0 -0.1', 'side-right': '0 0 -0.1', 'side-top': '0 0 -0.1', 'whatsapp-btn': '0.08 -0.84 0.04', 'wa-video': '-1.1 -0.88 0.05' };
 var WHATSAPP_NUMBER = '919819605451';
 
     function openWhatsApp() {
@@ -268,36 +268,6 @@ var WHATSAPP_NUMBER = '919819605451';
       });
     });
 
-    function computeBottomUiLayout() {
-      var mainImg = document.getElementById('main-img');
-      var w = mainImg ? Number(mainImg.getAttribute('width')) || 1 : 1;
-      var h = mainImg ? Number(mainImg.getAttribute('height')) || 1 : 1;
-
-      // Margins from the card edge (in marker units)
-      var edgeMargin = 0.06;
-      var z = 0.06;
-
-      // WhatsApp 3D icon anchor at bottom-right of the card
-      var waX = (w / 2) - edgeMargin;
-      var waY = (-h / 2) + edgeMargin;
-
-      // Video is to the left of WhatsApp with a fixed gap
-      var videoEl = document.getElementById('wa-video');
-      var vW = videoEl ? Number(videoEl.getAttribute('width')) || 1.26 : 1.26;
-      var vH = videoEl ? Number(videoEl.getAttribute('height')) || 0.72 : 0.72;
-      var gap = 0.10;
-
-      // Approximate half-width for the WhatsApp logo footprint (keeps spacing consistent)
-      var waFootprint = 0.18;
-      var vX = waX - waFootprint - gap - (vW / 2);
-      var vY = (-h / 2) + (vH / 2) + edgeMargin;
-
-      return {
-        whatsappBtnPos: `${waX} ${waY} ${z}`,
-        waVideoPos: `${vX} ${vY} ${z}`
-      };
-    }
-
     function playSideAnimations() {
       targetEl.querySelectorAll('.side-img').forEach(function (el) { el.emit('playIn'); });
     }
@@ -305,8 +275,6 @@ var WHATSAPP_NUMBER = '919819605451';
     // Keep video progress between targetLost/targetFound
     var waVideoSavedTime = 0;
     function resetSideImages() {
-      var layout = computeBottomUiLayout();
-
       targetEl.querySelectorAll('.side-img').forEach(function (el) {
         var id = el.getAttribute('id');
         if (sideFromPositions[id]) {
@@ -317,15 +285,10 @@ var WHATSAPP_NUMBER = '919819605451';
         }
       });
 
-      var waBtn = document.getElementById('whatsapp-btn');
-      if (waBtn) waBtn.setAttribute('position', layout.whatsappBtnPos);
-
-      var waVideoEl = document.getElementById('wa-video');
-      if (waVideoEl) waVideoEl.setAttribute('position', layout.waVideoPos);
-
       var waModel = document.getElementById('whatsapp-model-entity');
       if (waModel) waModel.setAttribute('model-opacity', 'opacity', 0);
 
+      var waVideoEl = document.getElementById('wa-video');
       if (waVideoEl) waVideoEl.setAttribute('material', 'opacity', 0);
 
       var waVidAsset = document.getElementById('wa-vid');
