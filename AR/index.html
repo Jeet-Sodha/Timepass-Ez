@@ -168,12 +168,12 @@
         animation__position="property: position; from: 0 0 -0.1; to: 0 0.55 0.03; dur: 1400; easing: easeInOutSine; fill: forwards; startEvents: playIn">
       </a-image>
       <!-- Bottom: WhatsApp 3D model (fixed), fades in on detection -->
-      <a-entity class="side-img" id="whatsapp-btn" position="0 -0.84 0.04">
+      <a-entity class="side-img" id="whatsapp-btn" position="0.1 -0.84 0.04">
         <a-entity id="whatsapp-model-entity" gltf-model="#whatsapp-model" scale="-0.4 -0.4 0.4" rotation="0 180 -90" model-opacity="opacity: 0"></a-entity>
       </a-entity>
 
       <!-- Video panel: left of WhatsApp, fades in then plays -->
-      <a-video class="side-img" id="wa-video" src="#wa-vid" position="-0.4 -0.88 0.05"
+      <a-video class="side-img" id="wa-video" src="#wa-vid" position="-0.5 -0.88 0.05" 
         width="1.008" height="0.576" material="opacity: 0; transparent: true">
       </a-video>
     </a-entity>
@@ -222,7 +222,7 @@
 
     var statusEl = document.getElementById('target-status');
     var targetEl = document.getElementById('target-0');
-    var sideFromPositions = { 'side-left': '0 0 -0.1', 'side-right': '0 0 -0.1', 'side-top': '0 0 -0.1', 'whatsapp-btn': '0 -0.84 0.04', 'wa-video': '-0.4 -0.88 0.05' };
+    var sideFromPositions = { 'side-left': '0 0 -0.1', 'side-right': '0 0 -0.1', 'side-top': '0 0 -0.1', 'whatsapp-btn': '0 -0.84 0.04', 'wa-video': '-0.5 -0.88 0.05' };
 var WHATSAPP_NUMBER = '919819605451';
 
     function openWhatsApp() {
