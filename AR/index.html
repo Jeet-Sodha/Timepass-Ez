@@ -58,10 +58,9 @@
 
     #whatsapp-ui-btn {
       position: fixed;
-      bottom: 24px;
-      right: 24px;
-      left: auto;
-      transform: none;
+      bottom: 28px;
+      left: 50%;
+      transform: translateX(-50%);
       padding: 14px 28px;
       background: var(--wa-bg);
       color: #fff;
@@ -87,11 +86,11 @@
       animation: btn-in 0.35s ease-out;
     }
     #whatsapp-ui-btn:hover {
-      transform: translateY(-2px);
+      transform: translateX(-50%) translateY(-2px);
       box-shadow: var(--wa-hover);
     }
     #whatsapp-ui-btn:active {
-      transform: translateY(0);
+      transform: translateX(-50%) translateY(0);
     }
     @keyframes btn-in {
       from {
@@ -112,10 +111,9 @@
 
     #video-audio-toggle {
       position: fixed;
-      bottom: 18px;
-      left: 18px;
-      right: auto;
-      transform: none;
+      bottom: 84px;
+      left: 50%;
+      transform: translateX(-50%);
       padding: 10px 16px;
       border-radius: 999px;
       border: 1px solid rgba(255, 255, 255, 0.25);
@@ -170,12 +168,12 @@
         animation__position="property: position; from: 0 0 -0.1; to: 0 0.55 0.03; dur: 1400; easing: easeInOutSine; fill: forwards; startEvents: playIn">
       </a-image>
       <!-- Bottom: WhatsApp 3D model (fixed), fades in on detection -->
-      <a-entity class="side-img" id="whatsapp-btn" position="0.08 -0.84 0.04">
+      <a-entity class="side-img" id="whatsapp-btn" position="0 -0.84 0.04">
         <a-entity id="whatsapp-model-entity" gltf-model="#whatsapp-model" scale="-0.4 -0.4 0.4" rotation="0 180 -90" model-opacity="opacity: 0"></a-entity>
       </a-entity>
 
-      <!-- Video panel: left of WhatsApp, plays muted (mobile-friendly) -->
-      <a-video class="side-img" id="wa-video" src="#wa-vid" position="-1.1 -0.88 0.05"
+      <!-- Video panel: left of WhatsApp, fades in then plays -->
+      <a-video class="side-img" id="wa-video" src="#wa-vid" position="-0.76 -0.88 0.05"
         width="1.008" height="0.576" material="opacity: 0; transparent: true">
       </a-video>
     </a-entity>
@@ -224,7 +222,7 @@
 
     var statusEl = document.getElementById('target-status');
     var targetEl = document.getElementById('target-0');
-    var sideFromPositions = { 'side-left': '0 0 -0.1', 'side-right': '0 0 -0.1', 'side-top': '0 0 -0.1', 'whatsapp-btn': '0.08 -0.84 0.04', 'wa-video': '-1.1 -0.88 0.05' };
+    var sideFromPositions = { 'side-left': '0 0 -0.1', 'side-right': '0 0 -0.1', 'side-top': '0 0 -0.1', 'whatsapp-btn': '0 -0.84 0.04', 'wa-video': '-0.76 -0.88 0.05' };
 var WHATSAPP_NUMBER = '919819605451';
 
     function openWhatsApp() {
